@@ -179,32 +179,32 @@ def testing_model(model, X_valid, y_valid):
 
 
 ############################# Save Model ####################################
-# def save_model(model):
-#
-#     # 4. Save and load the model via state_dict :
-#     # Let’s save and load our model using just state_dict.
-#
-#     # Specify a path
-#     filepath = "../models/state_dict_model_2.pt"
-#     # Save
-#     torch.save(model.state_dict(), filepath)
-#
-#     # 5. Save and load entire model : Now let’s try the same thing with the entire model.
-#     # Specify a path
-#     filepath_entire = "../models/entire_model_2.pt"
-#
-#     # Save
-#     torch.save(model, filepath_entire)
-#
-#     # # Load
-#     # model = torch.load(PATH)
-#     # model.eval()
-#
-#     # # model = ANN()
-#     # model.load_state_dict(torch.load(PATH))
-#     # model.eval()
-#     # print(model.eval())
-#
+def save_model(model):
+
+    # 4. Save and load the model via state_dict :
+    # Let’s save and load our model using just state_dict.
+
+    # Specify a path
+    filepath = "../models/state_dict_model_2.pt"
+    # Save
+    torch.save(model.state_dict(), filepath)
+
+    # 5. Save and load entire model : Now let’s try the same thing with the entire model.
+    # Specify a path
+    filepath_entire = "../models/entire_model_2.pt"
+
+    # Save
+    torch.save(model, filepath_entire)
+
+    # # Load
+    # model = torch.load(PATH)
+    # model.eval()
+
+    # # model = ANN()
+    # model.load_state_dict(torch.load(PATH))
+    # model.eval()
+    # print(model.eval())
+
 
 ############################# MAIN() ####################################
 
