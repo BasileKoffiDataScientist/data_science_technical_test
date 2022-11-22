@@ -9,6 +9,9 @@ import numpy as np
 import feature_extractor as fe
 from sklearn.model_selection import train_test_split
 
+import pandas_profiling as pp
+
+
 data=config.path_single
 
 
@@ -26,6 +29,11 @@ def LoadExtract_transform(data):
     new_df.columns = new_df.columns.map(lambda x: 'fe_' + str(x))
 
     X_all = pd.concat([data_4_model, new_df], axis=1)
+
+    # Data Exploration
+    # report_X_all_model_1 = pp.ProfileReport(X_all)
+    # report_X_all_model_1.to_file('templates/profile_report_X_all_model_1.html')
+
     X_all.drop(columns=['mol_id', 'smiles', 'smiles_features'], inplace=True)
     X = X_all.drop('P1', axis=1).values
     y = X_all['P1'].values

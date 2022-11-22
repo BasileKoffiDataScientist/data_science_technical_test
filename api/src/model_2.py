@@ -11,6 +11,8 @@ import numpy as np
 import feature_extractor as fe
 from sklearn.model_selection import train_test_split
 
+import pandas_profiling as pp
+
 from deepchem.feat.smiles_tokenizer import SmilesTokenizer
 from transformers import BertTokenizer
 # current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -42,6 +44,10 @@ def load_extract_transform_smile_string(data):
     new_df.columns = new_df.columns.map(lambda x: 'ssf_' + str(x))
 
     X_all = pd.concat([data_4_model, new_df], axis=1)
+
+    # Data Exploration
+    # report_X_all_model_2 = pp.ProfileReport(X_all)
+    # report_X_all_model_2.to_file('templates/profile_report_X_all_model_2.html')
 
 
     X_all.drop(columns=['mol_id', 'smiles', 'smiles_string_features'], inplace=True)
