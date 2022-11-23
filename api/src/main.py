@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MaxAbsScaler
 
+
 import config_file as config
 import feature_extractor as fe
 from sklearn import metrics
@@ -152,10 +153,10 @@ pd.set_option('display.width', 1000)
 # def train_model():
 #     pass
 #
-#
-# def predict(X_test=None):
-#     pass
-#
+
+def predict(X_test=None):
+    pass
+
 #
 # def evaluate(y_true, y_pred):
 #     pass

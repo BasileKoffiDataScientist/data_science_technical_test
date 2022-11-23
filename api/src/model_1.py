@@ -1,4 +1,3 @@
-
 import os
 import config_file as config
 import torch
@@ -20,6 +19,10 @@ def LoadExtract_transform(data):
     # extract feature
     data_4_model['smiles_features'] = data_4_model.smiles.apply(
         lambda x: np.array(fe.fingerprint_features(x)))
+
+    # Data Exploration
+    # data_4_model_model_1 = pp.ProfileReport(data_4_model)
+    # data_4_model_model_1.to_file('profile_report_data_4_model_model_1.html')
 
     list_feature = []
     for i in range(len(data_4_model.smiles_features)):
@@ -70,22 +73,65 @@ X_train, X_test, X_valid, y_train, y_test, y_valid = LoadExtract_transform(data)
 # test_labels = torch.tensor(y_test)
 
 class ANN(nn.Module):
+    # I define the model element below
     def __init__(self):
         super().__init__()
+        # The first hidden layer
         self.fc1 = nn.Linear(in_features=2048, out_features=16)
+        # The second hidden layer
         self.fc2 = nn.Linear(in_features=16, out_features=12)
+        # The third hidden layer
         self.fc3 = nn.Linear(in_features=12, out_features=8)
         self.output = nn.Linear(in_features=8, out_features=2)
 
+    # forward propagate input
     def forward(self, x):
+        # input to first hidden layer
         x = F.relu(self.fc1(x))
+        # input to second hidden layer
         x = F.relu(self.fc2(x))
+        # input to third hidden layer
         x = F.relu(self.fc3(x))
         x = self.output(x)
         return x
-model = ANN()
-#
 
+
+model = ANN()
+
+
+############################# To make it generic : ##############################################
+
+n_inputs = 2048
+# ---------------------------------------------------
+# You can change it by uncomment the two rows below
+# ---------------------------------------------------
+# print('Enter the number of feature :')
+# n_inputs = input()
+
+class ANN_generic(nn.Module):
+    # I define the model element below
+    def __init__(self, n_inputs):
+        super().__init__()
+        # The first hidden layer
+        self.fc1 = nn.Linear(n_inputs, out_features=16)
+        # The second hidden layer
+        self.fc2 = nn.Linear(in_features=16, out_features=12)
+        # The third hidden layer
+        self.fc3 = nn.Linear(in_features=12, out_features=8)
+        self.output = nn.Linear(in_features=8, out_features=2)
+
+    # forward propagate input
+    def forward(self, x):
+        # input to first hidden layer
+        x = F.relu(self.fc1(x))
+        # input to second hidden layer
+        x = F.relu(self.fc2(x))
+        # input to third hidden layer
+        x = F.relu(self.fc3(x))
+        x = self.output(x)
+        return x
+
+# model_generic = ANN_generic()
 
 
 ################################# Model Training ################################################
@@ -140,7 +186,6 @@ def evaluate_model(X_test, model):
 ################################# Model Testing ################################################
 
 
-
 def testing_model(model, X_valid, y_valid):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -183,13 +228,11 @@ def testing_model(model, X_valid, y_valid):
 # print(df_correct)
 
 
-
-
 ############################# Save Model ####################################
 
 def save_model(model):
 
-    # 4. Save and load the model via state_dict :
+    # Save and load the model via state_dict :
     # Let’s save and load our model using just state_dict.
 
     # Specify a path
@@ -197,7 +240,7 @@ def save_model(model):
     # Save
     torch.save(model.state_dict(), filepath)
 
-    # 5. Save and load entire model : Now let’s try the same thing with the entire model.
+    # Save and load entire model : Now let’s try the same thing with the entire model.
     # Specify a path
     filepath_entire = "../models/entire_model_1.pt"
 
