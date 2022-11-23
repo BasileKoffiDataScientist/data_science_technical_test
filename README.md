@@ -1,10 +1,21 @@
 # data_science_technical_test
+# !!! CAUTION !!! : At this point, you must run model 1 an 2 to see prediction - api is not ready
 
 **Table of content**
 
 - [Documentation](#documentation)
   - [Objectif :](#objectif-of-this-project-)
 - [Data Exploration](#data-exploration)
+- [Deep Learning Model](#deep-learning-model)
+  - [Model_1 ANN](#Model_1 ANN with extracted features of a molecule )
+  - [Model_2 ANN](#Model_2 ANN with smile string character as input)
+  - [Model_3 Multitask](#Model_3 Multitask-Extension of Model1)
+- [Project Structure](#project-structure)
+- [Dockerization](#dockerization)
+- [Project Structure](#project-structure)
+  - [Project Structure](#project-structure)
+- [Flask API](#flask-api)
+  - [Setup](#setup-2)
 
 # Documentation
 ## Context - What do you learn in this project?
@@ -92,7 +103,8 @@ This project is organized as follow
 ├── Dockerfile
 ├── LICENCE
 ├── README.md
-├── run_flask_api.sh
+├──requirements.txt 
+├──run_flask_api.sh 
 ├── servier.yaml
 └── setup.py
 ```
