@@ -23,6 +23,7 @@ from rdkit.Chem import rdMolDescriptors, MolFromSmiles, rdmolfiles, rdmolops
 #     return data_4_model
 #
 #
+
 def fingerprint_features(smile_string, radius=2, size=2048):
     mol = MolFromSmiles(smile_string)
     new_order = rdmolfiles.CanonicalRankAtoms(mol)

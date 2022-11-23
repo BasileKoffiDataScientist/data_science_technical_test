@@ -10,9 +10,69 @@ from sklearn.model_selection import train_test_split
 
 import pandas_profiling as pp
 
+from torch import Tensor
+from transformers import BertTokenizer
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+from sklearn.preprocessing import MaxAbsScaler
+# Display setting
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+
+#
+# row_data = 'Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C'
+#
+#
+# def pad_or_truncate(some_list, target_len=65):
+#     return some_list[:target_len] + [0]*(target_len - len(some_list))
+#
+#
+# # explicit function to normalize array
+# def normalize(arr, t_min, t_max):
+#     norm_arr = []
+#     diff = t_max - t_min
+#     diff_arr = max(arr) - min(arr)
+#     for i in arr:
+#         temp = (((i - min(arr)) * diff) / diff_arr) + t_min
+#         norm_arr.append(temp)
+#     return norm_arr
+#
+#
+# def row_for_prediction(row_data):
+#     lst_fp = []
+#
+#     row_fp = fe.fingerprint_features(row_data).ToBitString()
+#     for letter in row_fp:
+#         lst_fp.append(int(letter))
+#
+#     lst_smile = tokenizer.encode(row_data)
+#     new_list_smile = pad_or_truncate(lst_smile, target_len=65)
+#
+#     # Normalizing data
+#
+#     range_to_normalize = (0, 1)
+#     list_smile_normalize = normalize(new_list_smile, range_to_normalize[0], range_to_normalize[1])
+#
+#     return lst_fp, list_smile_normalize
+#
+#
+# lst_fp, list_smile_normalize = row_for_prediction(row_data)
+#
+# # print(lst_fp)
+# # print(list_smile_normalize)
+# #
+# # print(type(lst_fp))
+# # print(type(list_smile_normalize))
+#
+# row_fp_tensor = torch.FloatTensor(lst_fp)
+# row_smile_tensor = torch.FloatTensor(list_smile_normalize)
+#
+
+
+# exit()
+
 
 data=config.path_single
-
 
 def LoadExtract_transform(data):
     data_4_model = pd.read_csv(data)
@@ -176,14 +236,14 @@ def evaluate_model(X_test, model):
 
     return acc, dictionary_accuracy
 
-#
-# acc = evaluate_model(X_test, model)
+
+# acc = evaluate_model(row_fp_tensor, model)
 # print('###### ACCURACY AFTER EVALUATION!!! #####')
 # print('Model Accuracy :')
 # print(acc)
-
-
-################################# Model Testing ################################################
+#
+# exit()
+################################ Model Testing ################################################
 
 
 def testing_model(model, X_valid, y_valid):
@@ -210,6 +270,7 @@ def testing_model(model, X_valid, y_valid):
     # print(correct)
     df_correct = pd.DataFrame(correct, columns=['pred_testing'])
     df_correct.pred_testing = df_correct.pred_testing.replace({True: 1, False: 0})
+    # print(df_correct)
     # g = df_correct.groupby(['pred_testing']).count()
     print('###### CONFUSION MATRIX AFTER TESTING!!! #####')
     confusion_matrix = df_correct['pred_testing'].value_counts().to_frame()
@@ -232,29 +293,32 @@ def testing_model(model, X_valid, y_valid):
 
 def save_model(model):
 
-    # Save and load the model via state_dict :
-    # Let’s save and load our model using just state_dict.
+    model_scripted = torch.jit.script(model)  # Export to TorchScript
+    # model_scripted.save('../models/model_scripted_1.pt')  # Save
 
-    # Specify a path
-    filepath = "../models/state_dict_model_1.pt"
-    # Save
-    torch.save(model.state_dict(), filepath)
-
-    # Save and load entire model : Now let’s try the same thing with the entire model.
-    # Specify a path
-    filepath_entire = "../models/entire_model_1.pt"
-
-    # Save
-    torch.save(model, filepath_entire)
-
-    # # Load
-    # model = torch.load(PATH)
-    # model.eval()
-
-    # # model = ANN()
-    # model.load_state_dict(torch.load(PATH))
-    # model.eval()
-    # print(model.eval())
+    # # Save and load the model via state_dict :
+    # # Let’s save and load our model using just state_dict.
+    #
+    # # Specify a path
+    # filepath = "../models/state_dict_model_1.pt"
+    # # Save
+    # torch.save(model.state_dict(), filepath)
+    #
+    # # Save and load entire model : Now let’s try the same thing with the entire model.
+    # # Specify a path
+    # filepath_entire = "../models/entire_model_1.pt"
+    #
+    # # Save
+    # torch.save(model, filepath_entire)
+    #
+    # # # Load
+    # # model = torch.load(PATH)
+    # # model.eval()
+    #
+    # # # model = ANN()
+    # # model.load_state_dict(torch.load(PATH))
+    # # model.eval()
+    # # print(model.eval())
 
 
 ############################# MAIN() ####################################
@@ -278,6 +342,38 @@ def main_model_1():
     # save_model(model)
 
 
+#
+# # make a class prediction for one row of data
+# def predict(row, model):
+#     # convert row to data
+#     # row = Tensor([row])
+#     # make prediction
+#     yhat = model(row)
+#     # print(yhat)
+#     # retrieve numpy array
+#     yhat = yhat.detach().numpy()
+#     return yhat
+#
+#
+#
+#
+#
+# yhat = predict(row_fp_tensor, model).argmax().item()
+#
+# dictionary_yhat = {'Model prediction': yhat}
+# # print('predicted : ')
+# print(dictionary_yhat)
+# print('DONE!!!!')
+# exit()
+#
+#
+#
+# print('*'*100)
+# y_hat = model(row_fp_tensor).argmax().item()
+# output_row = model(row_fp_tensor).argmax().item()
+# print(y_hat)
+# print('*'*100)
+# exit()
 
 if __name__ == "__main__":
     main_model_1()

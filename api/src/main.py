@@ -17,9 +17,9 @@ from sklearn.model_selection import train_test_split
 
 from transformers import BertTokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-from model_1 import *
-from model_2 import *
-from model_3 import *
+# from model_1 import *
+# from model_2 import *
+# from model_3 import *
 
 
 # Display setting
@@ -154,23 +154,23 @@ pd.set_option('display.width', 1000)
 # def train_model():
 #     pass
 #
-
-def evaluate_model(X_test, model):
-    preds = []
-    with torch.no_grad():
-        for val in X_test:
-            y_hat = model.forward(val)
-            preds.append(y_hat.argmax().item())
-
-    df = pd.DataFrame({'Y': y_test, 'YHat': preds})
-    df['Correct'] = [1 if corr == pred else 0 for corr, pred in zip(df['Y'], df['YHat'])]
-
-    acc = df['Correct'].sum() / len(df)
-    dictionary_accuracy = {'Model Accuracy': acc}
-    # print(dictionary_accuracy)
-    # acc = accuracy_score(df['Y'], df['YHat'])
-
-    return acc, dictionary_accuracy
+#
+# def evaluate_model(X_test, model):
+#     preds = []
+#     with torch.no_grad():
+#         for val in X_test:
+#             y_hat = model.forward(val)
+#             preds.append(y_hat.argmax().item())
+#
+#     df = pd.DataFrame({'Y': y_test, 'YHat': preds})
+#     df['Correct'] = [1 if corr == pred else 0 for corr, pred in zip(df['Y'], df['YHat'])]
+#
+#     acc = df['Correct'].sum() / len(df)
+#     dictionary_accuracy = {'Model Accuracy': acc}
+#     # print(dictionary_accuracy)
+#     # acc = accuracy_score(df['Y'], df['YHat'])
+#
+#     return acc, dictionary_accuracy
 
 #
 # def evaluate(y_true, y_pred):
@@ -180,13 +180,152 @@ def evaluate_model(X_test, model):
 # def test():
 #     pass
 
-def main():
+#
+# print('[INFO: Prediction start here!!!!]')
+model_1 = torch.jit.load('../models/model_scripted_1.pt')
+model_1.eval()
+# print(model_1)
 
-    print('[INFO] DONE...')
+model_2 = torch.jit.load('../models/model_scripted_2.pt')
+model_2.eval()
+# print(model_2)
+
+# exit()
+
+row_data = 'Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C'
+
+
+def pad_or_truncate(some_list, target_len=65):
+    return some_list[:target_len] + [0]*(target_len - len(some_list))
+
+
+# explicit function to normalize array
+def normalize(arr, t_min, t_max):
+    norm_arr = []
+    diff = t_max - t_min
+    diff_arr = max(arr) - min(arr)
+    for i in arr:
+        temp = (((i - min(arr)) * diff) / diff_arr) + t_min
+        norm_arr.append(temp)
+    return norm_arr
+
+
+def row_for_prediction(row_data):
+    lst_fp = []
+
+    row_fp = fe.fingerprint_features(row_data).ToBitString()
+    for letter in row_fp:
+        lst_fp.append(int(letter))
+
+    lst_smile = tokenizer.encode(row_data)
+    new_list_smile = pad_or_truncate(lst_smile, target_len=65)
+
+    # Normalizing data
+
+    range_to_normalize = (0, 1)
+    list_smile_normalize = normalize(new_list_smile, range_to_normalize[0], range_to_normalize[1])
+
+    return lst_fp, list_smile_normalize
+
+
+# lst_fp, list_smile_normalize = row_for_prediction(row_data)
+
+# print(lst_fp)
+# print(list_smile_normalize)
+#
+# print(type(lst_fp))
+# print(type(list_smile_normalize))
+
+# row_fp_tensor = torch.FloatTensor(lst_fp)
+# row_smile_tensor = torch.FloatTensor(list_smile_normalize)
+
+
+
+
+
+# make a class prediction for one row of data
+def predict(row, model):
+    # convert row to data
+    # row = Tensor([row])
+    # make prediction
+    yhat = model(row)
+    # retrieve numpy array
+    yhat = yhat.detach().numpy()
+    return yhat
+
+
+
+
+# # Model 1
+# yhat = predict(row_fp_tensor, model_1).argmax().item()
+# dictionary_yhat = {'Model 1 prediction by fingerprint': yhat}
+# # print('predicted : ')
+# print(dictionary_yhat)
+# print('DONE!!!!')
+# print('[INFO: Prediction finished here!!!!]')
+#
+#
+# # Model 2
+# yhat_2 = predict(row_smile_tensor, model_2).argmax().item()
+#
+# dictionary_yhat_2 = {'Model 2 prediction by smile string charactere': yhat_2}
+# # print('predicted : ')
+# print(dictionary_yhat_2)
+# print('DONE AGAIN !!!!')
+# exit()
+
+
+#
+# print('*'*100)
+# y_hat = model_1(row_fp_tensor).argmax().item()
+# output_row = model_1(row_fp_tensor).argmax().item()
+# print(y_hat)
+#
+# dictionary_yhat = {'Model prediction': yhat}
+# print(dictionary_yhat)
+# print('*'*100)
+# exit()
+# # exit()
+
+print('Entrez votre molecule ici :')
+data = input()
+# print(data)
+#
+# exit()
+
+def main(data):
+    lst_fp, list_smile_normalize = row_for_prediction(data)
+    row_fp_tensor = torch.FloatTensor(lst_fp)
+    row_smile_tensor = torch.FloatTensor(list_smile_normalize)
+
+    print('[INFO: Model 1 prediction start here!!!!]')
+    # Model 1
+    yhat = predict(row_fp_tensor, model_1).argmax().item()
+    dictionary_yhat = {'Model 1 prediction by fingerprint': yhat}
+    # print('predicted : ')
+    print(dictionary_yhat)
+    print('DONE!!!!')
+    print('[INFO: Model 1 Prediction finished here!!!!]')
+
+    print('*'*100)
+
+    print('[INFO: Model 2 prediction start here!!!!]')
+
+    # Model 2
+    yhat_2 = predict(row_smile_tensor, model_2).argmax().item()
+
+    dictionary_yhat_2 = {'Model 2 prediction by smile string charactere': yhat_2}
+    # print('predicted : ')
+    print(dictionary_yhat_2)
+    print('DONE AGAIN !!!!')
+    print('[INFO: Model 2 Prediction finished here!!!!]')
+    # exit()
+
+    print('[INFO] DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...')
 
 
 if __name__ == "__main__":
-    main()
+    main(data)
 
 
 
