@@ -14,6 +14,7 @@ import feature_extractor as fe
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+
 from transformers import BertTokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 from model_1 import *
@@ -154,8 +155,22 @@ pd.set_option('display.width', 1000)
 #     pass
 #
 
-def predict(X_test=None):
-    pass
+def evaluate_model(X_test, model):
+    preds = []
+    with torch.no_grad():
+        for val in X_test:
+            y_hat = model.forward(val)
+            preds.append(y_hat.argmax().item())
+
+    df = pd.DataFrame({'Y': y_test, 'YHat': preds})
+    df['Correct'] = [1 if corr == pred else 0 for corr, pred in zip(df['Y'], df['YHat'])]
+
+    acc = df['Correct'].sum() / len(df)
+    dictionary_accuracy = {'Model Accuracy': acc}
+    # print(dictionary_accuracy)
+    # acc = accuracy_score(df['Y'], df['YHat'])
+
+    return acc, dictionary_accuracy
 
 #
 # def evaluate(y_true, y_pred):
@@ -166,7 +181,6 @@ def predict(X_test=None):
 #     pass
 
 def main():
-
 
     print('[INFO] DONE...')
 

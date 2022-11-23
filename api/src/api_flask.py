@@ -21,11 +21,8 @@ def multi_data_view():
     return render_template('profile_report_data_4_model_multi_model_3.html')
 
 #
-# @app.route('/predict/<path:path_X_test>')
+# @app.route('/predict/<path:path_X_test>',methods=['POST'])
 # def predict(path_X_test):
-#     """
-#
-#     """
 #     isinstance(path_X_test, str)
 #     y_pred = predict(path_X_test)
 #     return {'status': 'OK', 'y_pred': y_pred.tolist()}
