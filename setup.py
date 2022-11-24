@@ -20,6 +20,6 @@ setuptools.setup(
         "Operating System  :: OS Independant",
     ],
     entry_points='''
-        Work in progress!!!
+        http://192.168.1.4:5000/final/data
         ''',
 )

@@ -20,7 +20,6 @@
       <li class="active"><a href="/">Home</a></li>
       <li><a href="{{ url_for('single_data_view') }}">Single data</a></li>
       <li><a href="{{ url_for('multi_data_view') }}">Multiple data</a></li>
-      <li><a href="{{ url_for('predict') }}">Prediction</a></li>
     </ul>
   </div>
 </nav>
@@ -29,6 +28,6 @@
   <h3>Home Page</h3>
   <p>Bienvenue dans cette application de prédiction de la propriété des médicaments!</p>
 </div>
-
+<h1>{{my_prediction}}</h1>
 </body>
 </html>

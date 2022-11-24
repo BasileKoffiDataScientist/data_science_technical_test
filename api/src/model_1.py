@@ -245,7 +245,6 @@ def evaluate_model(X_test, model):
 # exit()
 ################################ Model Testing ################################################
 
-
 def testing_model(model, X_valid, y_valid):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -294,7 +293,7 @@ def testing_model(model, X_valid, y_valid):
 def save_model(model):
 
     model_scripted = torch.jit.script(model)  # Export to TorchScript
-    # model_scripted.save('../models/model_scripted_1.pt')  # Save
+    model_scripted.save('../models/model_scripted_1.pt')  # Save
 
     # # Save and load the model via state_dict :
     # # Let’s save and load our model using just state_dict.

@@ -13,19 +13,6 @@ import feature_extractor as fe
 from sklearn.model_selection import train_test_split
 import pandas_profiling as pp
 
-from torch.optim import AdamW
-from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
-import copy
-import torch.optim as optim
-from torch.optim import lr_scheduler
-import torch.backends.cudnn as cudnn
-import time
-import copy
-#
-# import torch
-# import torch.nn as nn
-# import torch.nn.functional as F
-#
 
 from deepchem.feat.smiles_tokenizer import SmilesTokenizer
 from transformers import BertTokenizer
@@ -41,7 +28,7 @@ pd.set_option('display.width', 1000)
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 
-data=config.path_multi
+
 
 # model = ANN(*args, **kwargs)
 # model.load_state_dict(torch.load(PATH))
@@ -51,6 +38,7 @@ data=config.path_multi
 # exit()
 
 # Extract all the targets in a dataframe
+data=config.path_multi
 def target_data(data):
     df = pd.read_csv(data)
     df_target = df[['P2',  'P3',  'P3',  'P4',  'P5',  'P6',  'P7',  'P8',  'P9']]
@@ -69,6 +57,9 @@ def load_extract_transform_smile_string(data):
     data_4_model_multi['smiles_string_features'] = data_4_model_multi.smiles.apply(
         lambda x: np.array(tokenizer.encode(x)))
 
+    # print(data_4_model_multi)
+    # exit()
+
     # Data Exploration
     # report_data_4_model_multi_model_3 = pp.ProfileReport(data_4_model_multi)
     # report_data_4_model_multi_model_3.to_file('profile_report_data_4_model_multi_model_3.html')
@@ -81,10 +72,6 @@ def load_extract_transform_smile_string(data):
     new_df.columns = new_df.columns.map(lambda x: 'ssf_' + str(x))
 
     X_all = pd.concat([data_4_model_multi, new_df], axis=1)
-
-    # print(X_all)
-    # exit()
-
     X_all.drop(columns=['mol_id', 'smiles', 'smiles_string_features'], inplace=True)
     X_all = X_all.fillna(0)
     # print(X_all)
@@ -146,21 +133,9 @@ def load_extract_transform(data):
     data_4_model_multi = pd.read_csv(data)
     # extract feature
     new_df = extractfeatures(data_4_model_multi)
-    # data_4_model_multi['smiles_features'] = data_4_model_multi.smiles.apply(
-    #     lambda x: np.array(fe.fingerprint_features(x)))
-    #
-    # list_feature = []
-    # for i in range(len(data_4_model_multi.smiles_features)):
-    #     list_feature.append(data_4_model_multi.smiles_features[i])
-    #
-    # new_df = pd.DataFrame(list(map(np.ravel, list_feature)))
-    # new_df.columns = new_df.columns.map(lambda x: 'fe_' + str(x))
-    # print(new_df)
-    # exit()
+
     X_all = pd.concat([data_4_model_multi, new_df], axis=1)
     X_all.drop(columns=['mol_id', 'smiles', 'smiles_features'], inplace=True)
-    # print(X_all)
-    # exit()
     X = X_all.drop('P3', axis=1).values
     y = X_all['P3'].values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -183,22 +158,8 @@ def load_extract_transform(data):
     return X_train, X_test, X_valid, y_train, y_test, y_valid
 
 
-# data = './dataset_single.csv'
-
 # All the data are already Tensor data
 X_train, X_test, X_valid, y_train, y_test, y_valid = load_extract_transform(data)
-
-
-# # Convert all of our data into torch tensors, the required datatype for Pytorch model
-# train_inputs = torch.tensor(X_train)
-# train_labels = torch.tensor(y_train)
-#
-# validation_inputs = torch.tensor(X_valid)
-# validation_labels = torch.tensor(y_valid)
-#
-# test_inputs = torch.tensor(X_test)
-# test_labels = torch.tensor(y_test)
-
 
 class SingleTaskModel(nn.Module):
     """Single task model custom class"""

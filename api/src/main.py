@@ -287,11 +287,7 @@ def predict(row, model):
 # exit()
 # # exit()
 
-print('Entrez votre molecule ici :')
-data = input()
-# print(data)
-#
-# exit()
+
 
 def main(data):
     lst_fp, list_smile_normalize = row_for_prediction(data)
@@ -299,33 +295,98 @@ def main(data):
     row_smile_tensor = torch.FloatTensor(list_smile_normalize)
 
     print('[INFO: Model 1 prediction start here!!!!]')
-    # Model 1
-    yhat = predict(row_fp_tensor, model_1).argmax().item()
-    dictionary_yhat = {'Model 1 prediction by fingerprint': yhat}
-    # print('predicted : ')
-    print(dictionary_yhat)
-    print('DONE!!!!')
+
+    prediction_1 = predict(row_fp_tensor, model_1).argmax().item()
+    data_1 = {'prediction': prediction_1, 'class_name': str(prediction_1)}
     print('[INFO: Model 1 Prediction finished here!!!!]')
 
     print('*'*100)
 
     print('[INFO: Model 2 prediction start here!!!!]')
 
-    # Model 2
-    yhat_2 = predict(row_smile_tensor, model_2).argmax().item()
-
-    dictionary_yhat_2 = {'Model 2 prediction by smile string charactere': yhat_2}
-    # print('predicted : ')
-    print(dictionary_yhat_2)
-    print('DONE AGAIN !!!!')
+    prediction_2 = predict(row_smile_tensor, model_2).argmax().item()
+    data_2 = {'prediction': prediction_2, 'class_name': str(prediction_2)}
     print('[INFO: Model 2 Prediction finished here!!!!]')
-    # exit()
+
+
+    data_final = {
+        'data_1' : {'prediction': prediction_1, 'class_name': str(prediction_1)},
+        'data_2': {'prediction': prediction_2, 'class_name': str(prediction_2)},
+
+    }
+
+    print(data_final)
 
     print('[INFO] DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...')
 
 
+def predict_final(data):
+    lst_fp, list_smile_normalize = row_for_prediction(data)
+    row_fp_tensor = torch.FloatTensor(lst_fp)
+    row_smile_tensor = torch.FloatTensor(list_smile_normalize)
+
+    # print('[INFO: Model 1 prediction start here!!!!]')
+    # Model 1
+    # yhat = predict(row_fp_tensor, model_1).argmax().item()
+    prediction_1 = predict(row_fp_tensor, model_1).argmax().item()
+    data_1 = {'prediction': prediction_1, 'class_name': str(prediction_1)}
+
+    # print(data_1)
+
+
+    # dictionary_yhat = {'Model 1 prediction by fingerprint': yhat}
+    # # print('predicted : ')
+    # print(dictionary_yhat)
+    # print('DONE!!!!')
+    # print('[INFO: Model 1 Prediction finished here!!!!]')
+
+    # print('*'*100)
+
+    # print('[INFO: Model 2 prediction start here!!!!]')
+
+    # Model 2
+    # yhat_2 = predict(row_smile_tensor, model_2).argmax().item()
+    prediction_2 = predict(row_smile_tensor, model_2).argmax().item()
+    data_2 = {'prediction': prediction_2, 'class_name': str(prediction_2)}
+
+    # print(data_2)
+
+    # dictionary_yhat_2 = {'Model 2 prediction by smile string charactere': yhat_2}
+    # # print('predicted : ')
+    # print(dictionary_yhat_2)
+    # print('DONE AGAIN !!!!')
+    # print('[INFO: Model 2 Prediction finished here!!!!]')
+    # exit()
+
+    data_final = {
+        'model_1' : {'prediction': prediction_1, 'class_name': str(prediction_1)},
+        'model_2': {'prediction': prediction_2, 'class_name': str(prediction_2)},
+
+    }
+
+    # print(data_final)
+
+    # print('[INFO] DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...DONE...')
+    return data_final
+
+
+def predict_for_api(data):
+    lst_fp, list_smile_normalize = row_for_prediction(data)
+    row_fp_tensor = torch.FloatTensor(lst_fp)
+    row_smile_tensor = torch.FloatTensor(list_smile_normalize)
+
+    prediction_1 = predict(row_fp_tensor, model_1).argmax().item()
+
+    prediction_2 = predict(row_smile_tensor, model_2).argmax().item()
+    return prediction_1, prediction_2
+
 if __name__ == "__main__":
-    main(data)
+    print('Entrez votre molecule ici :')
+    # data = input()
+    # main('Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C')
+    data = 'Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C'
+    output = predict_final(data)
+    print(output)
 
 
 

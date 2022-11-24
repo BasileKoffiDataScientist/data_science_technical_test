@@ -18,10 +18,10 @@ from transformers import BertTokenizer
 # current_dir = os.path.dirname(os.path.realpath(__file__))
 # vocab_path = os.path.join(current_dir, 'tests/data', 'vocab.txt')
 # tokenizer = SmilesTokenizer(vocab_path)
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 
-data=config.path_single
+
+
 
 
 #
@@ -29,7 +29,8 @@ data=config.path_single
 # print(tokenizer.encode("Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C"))
 #
 
-
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+data=config.path_single
 def load_extract_transform_smile_string(data):
     data_4_model = pd.read_csv(data)
     # extract feature
@@ -52,9 +53,6 @@ def load_extract_transform_smile_string(data):
 
     X_all.drop(columns=['mol_id', 'smiles', 'smiles_string_features'], inplace=True)
     X_all = X_all.fillna(0)
-
-    # print(X_all)
-    # exit()
 
     # Normalizing data
     scaler = MaxAbsScaler()
